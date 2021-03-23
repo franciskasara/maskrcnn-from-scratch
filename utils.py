@@ -317,8 +317,8 @@ def draw_bbox(bboxparam):
 
 def shift_bbox_pixelwise(anchors,predicted_deltas):
     
-    assert len(anchors.shape)==2, "2 dimenzios anchors shape kell. Kapott: "+str(anchors.shape)
-    assert len(predicted_deltas.shape)==2, "2 dimenzios predicted_deltas shape kell. Kapott: "+str(predicted_deltas.shape)
+    assert len(anchors.shape)==2, "Anchor shape must be 2 dimensions. We got: "+str(anchors.shape)
+    assert len(predicted_deltas.shape)==2, "predicted_deltas shape must be 2 dimensions. We got: "+str(predicted_deltas.shape)
     anchor_widths=anchors[:,2]-anchors[:, 0]
     anchor_heights=anchors[:,3]-anchors[:, 1]
     anchor_centerx=anchors[:,0]+anchor_widths[:]/2
