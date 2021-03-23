@@ -42,7 +42,7 @@ def backboneNN():
 
 
     x=tf.keras.layers.Flatten()(x)
-    output=tf.keras.layers.Dense(2,activation='sigmoid')(x) # a multiclass one-hot encoding miatt szükséges h az utolsó aktiváció sigmoid legyen
+    output=tf.keras.layers.Dense(2,activation='sigmoid')(x) # in case of multiclass one-hot encoding we need a sigmoid at the end
     featuremapmodel=tf.keras.Model(input_,featuremap,name="CNN_fm")
     classifiermodel=tf.keras.Model(input_,output,name="CNN")
 
@@ -180,7 +180,7 @@ def batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=None,m
             if mode == 'Masktrain':
                 mask, h_=nrrd.read(os.path.join(maskfolder,filename))
                 m_batch[num]=mask           
-        if (np.sum(np.sum(np.sum(bb_batch)))==0): # nem lehet olyan batchet továbbítani a tanítás közben, amiben minden kép csak backround, akkor NaNra fut a bbox loss
+        if (np.sum(np.sum(np.sum(bb_batch)))==0): # we can't have a batch full of only BG images, cause the boxloss only takes FGs --> it would go to Nan in case of a full BG batch
             continue
         elif len(filenames)!=batchlen:
             continue
@@ -285,11 +285,10 @@ def mask_loss(pred_mask,gt_mask,gt_labels,indices):
 #TRAINSTEPS
 
 def create_rpn_trainstep(rpnmodel,fmmodel):
-    #@tf.function(experimental_relax_shapes=True)
     def rpn_trainstep(images, gt_box,allanchors,proposalcount,batchlen, rpn_optimizer):
         with tf.GradientTape() as gradientT:
             featuremaps=fmmodel(images)
-            logits,probs,deltas = rpnmodel(featuremaps)    #Itt kapjuk meg az RPN kimeneteket
+            logits,probs,deltas = rpnmodel(featuremaps)    #Here we get the RPNn outputs
             indices,gt_deltas,gt_labels=utils.indices_deltas_labels(gt_box,allanchors,batchlen,proposalcount,mode='pixelwise')
             rpn_loss_class,rpn_loss_delta = rpn_loss(logits, deltas, gt_labels, gt_deltas, indices, batchlen)                
             rpn_loss_w=rpn_loss_class+rpn_loss_delta
@@ -300,7 +299,6 @@ def create_rpn_trainstep(rpnmodel,fmmodel):
 
 
 def create_ch_trainstep(classheadmodel,rpnmodel,fmmodel):
-    #@tf.function(experimental_relax_shapes=True)
     def ch_trainstep(images,labels, gt_box, allanchors,roisize,batchlen, ch_optimizer):
         with tf.GradientTape() as gradientT:
             featuremaps=fmmodel(images)
@@ -317,7 +315,6 @@ def create_ch_trainstep(classheadmodel,rpnmodel,fmmodel):
     return ch_trainstep
 
 def create_mask_trainstep(maskheadmodel,rpnmodel,fmmodel):
-    #@tf.function(experimental_relax_shapes=True)
     def mask_trainstep(images,labels, gt_box, masks,allanchors,maskroisize, batchlen, mask_optimizer):
         with tf.GradientTape() as gradientT:
             featuremaps=fmmodel(images)
@@ -334,7 +331,6 @@ def create_mask_trainstep(maskheadmodel,rpnmodel,fmmodel):
 
 
 def create_complex_trainstep(fmmodel,rpnmodel,classheadmodel,maskheadmodel):
-    #@tf.function(experimental_relax_shapes=True)
     def complex_trainstep(images,gt_labels, gt_box,masks,allanchors, batchlen,proposalcount,roisize,maskroisize, complex_optimizer):
         with tf.GradientTape() as gradientT:
             
