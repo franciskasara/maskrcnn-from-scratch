@@ -77,7 +77,6 @@ def rpnN(featuremap):
 
 
 def classheadNN(featurefilters,proposalcount,roisize):
-    #small class head
     input_=tf.keras.layers.Input((proposalcount,roisize[0],roisize[1],featurefilters))
 
     x=tf.keras.layers.Conv2D(kernel_size=(1,1),padding='valid',activation='relu',filters=featurefilters)(input_)
@@ -207,13 +206,16 @@ def smooth_l1(y_true, y_pred):
 
 
 def rpn_loss(rpn_logits,rpn_deltas, gt_labels,gt_deltas , indices, batchlen):
+    
+    '''
+    rpn_logits,rpn_deltas: the predicted logits/deltas to all the anchors
+    gt_labels,gt_deltas: the correct labels and deltas to the chosen training anchors
+    indices: the indices of the chosen training anchors
+    '''
 
     predicted_classes = tf.gather_nd(rpn_logits, indices)
-
-    foregroundindices=indices[gt_labels.astype('bool')]
-    
-    predicted_deltas=tf.cast(tf.gather_nd(rpn_deltas, foregroundindices),tf.float32)
-    
+    foregroundindices=indices[gt_labels.astype('bool')] #labels: 0:BG  1:FG
+    predicted_deltas=tf.cast(tf.gather_nd(rpn_deltas, foregroundindices),tf.float32) #only the foreground anchors contribute to the box loss
     gt_deltas=tf.cast(tf.gather_nd(gt_deltas, foregroundindices),tf.float32)
 
     # Cross entropy loss
