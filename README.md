@@ -18,5 +18,5 @@ If you use my toydataset generation, you will need a path to:
   - the toydataset, which has to include an images and a masks folder
 
 ## Necessary packages you might not have: 
--- to work with the nrrd files install pynrrd
--- to work with LIDC-IDRI install pylidc
+- to work with the nrrd files install pynrrd
+- to work with LIDC-IDRI install pylidc
