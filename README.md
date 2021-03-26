@@ -1,5 +1,4 @@
-# maskrcnn-from-scratch
-#### Building a maskrcnn from scratch using tensorflow and keras
+# Building a maskrcnn from scratch using tensorflow and keras
 
 ## Files:
 GenerateToyDataset_fromscratch.ipynb: script to generate toydataset using the masks, and LIDC-IDRI dataset. 
