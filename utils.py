@@ -401,7 +401,7 @@ def visualize_results(image_batch,predicted_mask_batch,predicted_label_batch,pre
                     continue
                 else:
                     axarr[i,0].plot(*draw_bbox(box),linewidth=2, alpha=1, color='pink')
-                    axarr[i,1].text(box[1]+50,box[0]-5,predicted_scores_batch[i][num],color='pink',fontsize=12)
+                    axarr[i,1].text(box[1]+70,box[0]-5,predicted_scores_batch[i][num],color='pink',fontsize=12)
                     axarr[i,1].text(box[1],box[0]-5,classdict[predicted_label_batch[i][num]],color='pink',fontsize=12)
                     axarr[i,1].plot(*draw_bbox(box),linewidth=2, alpha=1, color='pink')
                     

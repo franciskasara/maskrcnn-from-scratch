@@ -157,7 +157,7 @@ def batchgenerator_cnn(datafolder,jsonfile,batchlen,numofdatas=None,fromimage=0)
                 x_batch=np.expand_dims(x_batch,-1)
                 yield x_batch, y_batch
             
-def batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=None,mode='RPNtrain',fromimage=0):
+def batchgenerator_maskrcnn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=None,mode='Complextrain',fromimage=0):
     if numofdatas is None:
         numofdatas=len(os.listdir(datafolder))
     indices = np.arange(fromimage,numofdatas)
@@ -176,7 +176,7 @@ def batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=None,m
             bbox=jsonfile[filename]['bbox']
             bb_batch.append(np.asarray(bbox))
             filenames.append(filename)
-            if mode == 'Masktrain':
+            if mode == 'Masktrain' or mode== 'Complextrain':
                 mask, h_=nrrd.read(os.path.join(maskfolder,filename))
                 m_batch[num]=mask           
         if (np.sum(np.sum(np.sum(bb_batch)))==0): # we can't have a batch full of only BG images, cause the boxloss only takes FGs --> it would go to Nan in case of a full BG batch
@@ -192,7 +192,10 @@ def batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=None,m
             elif mode=='Masktrain':
                 m_batch=np.expand_dims(m_batch,-1)
                 yield x_batch,y_batch,bb_batch, m_batch, filenames
-
+            else:
+                m_batch=np.expand_dims(m_batch,-1)
+                yield x_batch,y_batch,bb_batch, m_batch, filenames
+                
 #LOSSES               
                 
 def smooth_l1(y_true, y_pred):
@@ -281,7 +284,7 @@ def mask_loss(pred_mask,gt_mask,gt_labels,indices):
     gt_masks=tf.math.divide(gt_masks,gt_max) #we need a binary mask
 
     lf=tf.keras.losses.binary_crossentropy(gt_masks,predicted_masks)
-    loss=tf.reduce_mean(lf)
+    loss=tf.reduce_sum(lf)
     return loss
     
 #TRAINSTEPS
@@ -354,7 +357,7 @@ def create_complex_trainstep(fmmodel,rpnmodel,classheadmodel,maskheadmodel):
             #Maskhead
             fm_rois,mask_rois=utils.mask_roi_align(featuremaps,masks,proposals,maskroisize)
             predicted_masks=maskheadmodel(fm_rois)
-            maskloss=mask_loss(predicted_masks,mask_rois,gt_labels,ch_indices)
+            maskloss=mask_loss(predicted_masks,mask_rois,ch_gt_labels,ch_indices)
             
             #Complex loss and variables
             complexloss=rpn_loss_w+ch_loss_w+maskloss
@@ -381,7 +384,7 @@ def train_rpn(rpnmodell, fmmodel,allanchors,proposalcount,datafolder,maskfolder,
         losses=[]
         losses_c=[]
         losses_d=[]
-        batchgen=batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=numofdatas,mode='RPNtrain',fromimage=trainfromimage)
+        batchgen=batchgenerator_maskrcnn(datafolder,maskfolder,jsonfile,batchlen,numofdatas=numofdatas,mode='RPNtrain',fromimage=trainfromimage)
         for num,image_batch in enumerate(batchgen):
             x,bb=image_batch
             l,lc,ld=trainstep(x,bb,allanchors,proposalcount,batchlen,rpn_optimizer)
@@ -403,7 +406,7 @@ def train_classhead(classheadmodel,rpnmodel, fmmodel,allanchors,roisize,numofdat
         losses_c=[]
         losses_d=[]
         start = time.time()
-        batchgen=batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas,mode='Headtrain',fromimage=trainfromimage)
+        batchgen=batchgenerator_maskrcnn(datafolder,maskfolder,jsonfile,batchlen,numofdatas,mode='Headtrain',fromimage=trainfromimage)
         for num,image_batch in enumerate(batchgen):
             x,y,bb=image_batch
             classloss,deltaloss=trainstep(x,y,bb,allanchors,roisize,batchlen,ch_optimizer)
@@ -421,7 +424,7 @@ def train_maskhead(maskheadmodel,rpnmodel, fmmodel,allanchors,maskroisize,numofd
     for epoch in range(epochs):
         losses_m=[]
         start = time.time()
-        batchgen=batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas,mode='Masktrain',fromimage=trainfromimage)
+        batchgen=batchgenerator_maskrcnn(datafolder,maskfolder,jsonfile,batchlen,numofdatas,mode='Masktrain',fromimage=trainfromimage)
         for num,image_batch in enumerate(batchgen):
             x,y,bb,m,fnames=image_batch
             maskloss=trainstep(x,y,bb,m,allanchors,maskroisize,batchlen,mask_optimizer)
@@ -441,7 +444,7 @@ def train_complex(fmmodel,rpnmodel,classheadmodel,maskheadmodel,allanchors,propo
         masklosses=[]
         
         start = time.time()
-        batchgen=batchgenerator_rpn(datafolder,maskfolder,jsonfile,batchlen,numofdatas,mode='Masktrain',fromimage=trainfromimage)
+        batchgen=batchgenerator_maskrcnn(datafolder,maskfolder,jsonfile,batchlen,numofdatas,mode='Masktrain',fromimage=trainfromimage)
         for num,image_batch in enumerate(batchgen):
             x,y,bb,m,fnames=image_batch
             rpnloss,chloss,maskloss=trainstep(x,y,bb,m,allanchors,batchlen,proposalcount,roisize,maskroisize,complex_optimizer)
