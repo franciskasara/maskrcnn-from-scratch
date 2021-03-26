@@ -20,3 +20,5 @@ If you use my toydataset generation, you will need a path to:
 ## Necessary packages you might not have: 
 - to work with the nrrd files install pynrrd
 - to work with LIDC-IDRI install pylidc
+
+![plot](./full_maskrcnn.PNG.png)
