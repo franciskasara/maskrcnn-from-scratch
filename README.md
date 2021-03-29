@@ -22,3 +22,5 @@ If you use my toydataset generation, you will need a path to:
 - to work with LIDC-IDRI install pylidc
 
 ![plot](./full_maskrcnn.PNG)
+
+Franciska Rajki, Ulyssys Ltd. https://ulyssys.hu/
