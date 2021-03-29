@@ -29,7 +29,7 @@ If you use my toydataset generation, you will need a path to:
   year={2021},\
   publisher={Github},\
   journal={GitHub repository},\
-  howpublished={\url{https://github.com/rajkifranciska/maskrcnn-from-scratch}},\
+  howpublished={\url{https://github.com/rajkifranciska/maskrcnn-from-scratch}}, \
 }
 
 ![plot](./full_maskrcnn.PNG)
