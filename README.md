@@ -1,6 +1,6 @@
 # Building a maskrcnn from scratch using tensorflow and keras
 
-## Files:
+## 1. Files:
 - GenerateToyDataset_fromscratch.ipynb: script to generate toydataset using the masks, and LIDC-IDRI dataset. 
 - ./masks/: folder containing two mask files to generate toydataset
 (You need to download the LIDC-IDRI dataset, and have a config file as defined here:https://pylidc.github.io/install.html)
@@ -17,10 +17,25 @@ If you use my toydataset generation, you will need a path to:
   2. the normalized CT slices
   3. the toydataset, which has to include an images and a masks folder
 
-## Necessary packages you might not have: 
+## 2. Necessary packages you might not have: 
 - to work with the nrrd files install pynrrd
 - to work with LIDC-IDRI install pylidc
+
+## 3. Citation
+
+@misc{franciskarajki_maskrcnn_2021,
+  title={Mask R-CNN base from scratch},
+  author={Franciska Rajki},
+  year={2021},
+  publisher={Github},
+  journal={GitHub repository},
+  howpublished={\url{https://github.com/rajkifranciska/maskrcnn-from-scratch}},
+}
 
 ![plot](./full_maskrcnn.PNG)
 
 Franciska Rajki, Ulyssys Ltd. https://ulyssys.hu/
+
+
+
+
