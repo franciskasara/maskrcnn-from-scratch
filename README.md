@@ -23,13 +23,13 @@ If you use my toydataset generation, you will need a path to:
 
 ## 3. Citation
 
-@misc{franciskarajki_maskrcnn_2021,
-  title={Mask R-CNN base from scratch},
-  author={Franciska Rajki},
-  year={2021},
-  publisher={Github},
-  journal={GitHub repository},
-  howpublished={\url{https://github.com/rajkifranciska/maskrcnn-from-scratch}},
+@misc{franciskarajki_maskrcnn_2021,\
+  title={Mask R-CNN base from scratch},\
+  author={Franciska Rajki},\
+  year={2021},\
+  publisher={Github},\
+  journal={GitHub repository},\
+  howpublished={\url{https://github.com/rajkifranciska/maskrcnn-from-scratch}},\
 }
 
 ![plot](./full_maskrcnn.PNG)
