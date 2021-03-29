@@ -88,32 +88,7 @@ def calculate_pixelwise_deltas(bbox,anchors,numof):
     return deltas
 
 def calculate_exponential_deltas(bbox,anchors,numof):
-    
-    numofanchors=len(anchors)
-    deltas=np.zeros((numof,4)) #predicted dx,dy,dw,dh for each anchor
-    
-    anchor_widths=anchors[:, 2]-anchors[:, 0]
-    anchor_heights=anchors[:, 3]-anchors[:, 1]
-    anchor_centerx=anchors[:,0]+anchor_widths[:]/2
-    anchor_centery=anchors[:,1]+anchor_heights[:]/2
-    
-    bbox_width =bbox[2] - bbox[0]
-    bbox_height =bbox[3] - bbox[1]
-    bbox_centerx=bbox[0]+bbox_width/2
-    bbox_centery=bbox[1]+bbox_height/2
-
-    dw=np.log(bbox_width/anchor_widths[:])
-    dh=np.log(bbox_height/anchor_heights[:])
-    dx=(bbox_centerx-anchor_centerx[:])/anchor_widths[:]
-    dy=(bbox_centery-anchor_centery[:])/anchor_heights[:]
-    
-    for anchor in range(numof):
-        deltas[anchor]=[dx[anchor],dy[anchor],dw[anchor],dh[anchor]]
-
-    bbox_std_dev = np.array([0.1, 0.1, 0.2, 0.2])
-    deltas = deltas / bbox_std_dev
-
-    return deltas
+    raise NotImplementedError('Exponential anchorbox shifting is not implemented')
 
 
 def indices_deltas_labels(batch_of_bboxes, anchors,batchlen, train_set_size=20,mode='pixelwise'):  
@@ -339,24 +314,7 @@ def shift_bbox_pixelwise(anchors,predicted_deltas):
             
 
 def shift_bbox_exponential(anchors,predicted_deltas):
-        
-    anchor_widths=anchors[:,2]-anchors[:, 0]
-    anchor_heights=anchors[:,3]-anchors[:, 1]
-    anchor_centerx=anchors[:,0]+anchor_widths[:]/2
-    anchor_centery=anchors[:,1]+anchor_heights[:]/2
-
-    pred_xc=anchor_centerx[:]+(anchor_widths[:]*predicted_deltas[:,0])
-    pred_yc=anchor_centery[:]+(anchor_heights[:]*predicted_deltas[:,1])
-    pred_widths=anchor_widths[:]*(np.exp(predicted_deltas[:,2]))
-    pred_heights=anchor_heights[:]*(np.exp(predicted_deltas[:,3]))
-
-    predx1=pred_xc[:]-pred_widths[:]/2
-    predy1=pred_yc[:]-pred_heights[:]/2
-    predx2=pred_xc[:]+pred_widths[:]/2
-    predy2=pred_yc[:]+pred_heights[:]/2
-
-    batch_of_boxes=np.stack([predx1, predy1, predx2, predy2], axis=1)
-    return batch_of_boxes
+    raise NotImplementedError('Exponential anchorbox shifting is not implemented')
             
                 
 
