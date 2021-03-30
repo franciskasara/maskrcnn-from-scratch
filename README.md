@@ -1,6 +1,6 @@
 # Building a maskrcnn from scratch using TensorFlow and Keras
 Tested in TensorFlow 2.4.1 \
-Explanation: https://medium.com/@rajkifranciska/building-a-mask-r-cnn-from-scratch-in-tensorflow-and-keras-c49c72acc272
+Article about the content of this repository: https://medium.com/@rajkifranciska/building-a-mask-r-cnn-from-scratch-in-tensorflow-and-keras-c49c72acc272
 
 ## 1. Files:
 - GenerateToyDataset_fromscratch.ipynb: script to generate toydataset using the masks, and LIDC-IDRI dataset. 
