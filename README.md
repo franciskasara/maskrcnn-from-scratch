@@ -1,4 +1,4 @@
-# Building a maskrcnn from scratch using TensorFlow and Keras
+# Building a Mask R-CNN from scratch using TensorFlow and Keras
 Tested in TensorFlow 2.4.1 \
 Article about the content of this repository: https://medium.com/@rajkifranciska/building-a-mask-r-cnn-from-scratch-in-tensorflow-and-keras-c49c72acc272
 
@@ -26,7 +26,7 @@ If you use my toydataset generation, you will need a path to:
 ## 3. Citation
 
 @misc{franciskarajki_maskrcnn_2021,\
-  title={Building a maskrcnn from scratch using TensorFlow and Keras},\
+  title={Building a Mask R-CNN from scratch using TensorFlow and Keras},\
   author={Franciska Rajki},\
   year={2021},\
   publisher={Github},\
